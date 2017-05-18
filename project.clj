@@ -1,17 +1,17 @@
-(defproject binaryage/chromex-sample "0.1.0-SNAPSHOT"
-  :dependencies [[org.clojure/clojure "1.9.0-alpha15"]
+(defproject lxsameer/gemini                 "0.1.0-SNAPSHOT"
+  :dependencies [[org.clojure/clojure       "1.9.0-alpha15"]
                  [org.clojure/clojurescript "1.9.518"]
-                 [org.clojure/core.async "0.3.442"]
-                 [binaryage/chromex "0.5.7"]
-                 [binaryage/devtools "0.9.3"]
-                 [figwheel "0.5.10"]
-                 [environ "1.1.0"]]
+                 [org.clojure/core.async    "0.3.442"]
+                 [binaryage/chromex         "0.5.7"]
+                 [binaryage/devtools        "0.9.3"]
+                 [figwheel                  "0.5.10"]
+                 [environ                   "1.1.0"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]
-            [lein-figwheel "0.5.10"]
-            [lein-shell "0.5.0"]
-            [lein-environ "1.1.0"]
-            [lein-cooper "1.2.2"]]
+            [lein-figwheel  "0.5.10"]
+            [lein-shell     "0.5.0"]
+            [lein-environ   "1.1.0"]
+            [lein-cooper    "1.2.2"]]
 
   :source-paths ["src/background"
                  "src/popup"
@@ -21,7 +21,8 @@
                                     "resources/unpacked/compiled"
                                     "resources/release/compiled"]
 
-  :cljsbuild {:builds {}}                                                                                                     ; prevent https://github.com/emezeske/lein-cljsbuild/issues/413
+  ;; prevent https://github.com/emezeske/lein-cljsbuild/issues/413
+  :cljsbuild {:builds {}}
 
   :profiles {:unpacked
              {:cljsbuild {:builds
@@ -32,7 +33,7 @@
                                            :output-dir    "resources/unpacked/compiled/background"
                                            :asset-path    "compiled/background"
                                            :preloads      [devtools.preload]
-                                           :main          chromex-sample.background
+                                           :main          gemini.background
                                            :optimizations :none
                                            :source-map    true}}
                            :popup
@@ -42,7 +43,7 @@
                                            :output-dir    "resources/unpacked/compiled/popup"
                                            :asset-path    "compiled/popup"
                                            :preloads      [devtools.preload]
-                                           :main          chromex-sample.popup
+                                           :main          gemini.popup
                                            :optimizations :none
                                            :source-map    true}}}}}
              :unpacked-content-script
@@ -52,7 +53,7 @@
                             :compiler     {:output-to     "resources/unpacked/compiled/content-script/main.js"
                                            :output-dir    "resources/unpacked/compiled/content-script"
                                            :asset-path    "compiled/content-script"
-                                           :main          chromex-sample.content-script
+                                           :main          gemini.content-script
                                            ;:optimizations :whitespace                                                        ; content scripts cannot do eval / load script dynamically
                                            :optimizations :advanced                                                           ; let's use advanced build with pseudo-names for now, there seems to be a bug in deps ordering under :whitespace mode
                                            :pseudo-names  true
@@ -91,7 +92,7 @@
                             :compiler     {:output-to     "resources/release/compiled/background.js"
                                            :output-dir    "resources/release/compiled/background"
                                            :asset-path    "compiled/background"
-                                           :main          chromex-sample.background
+                                           :main          gemini.background
                                            :optimizations :advanced
                                            :elide-asserts true}}
                            :popup
@@ -99,7 +100,7 @@
                             :compiler     {:output-to     "resources/release/compiled/popup.js"
                                            :output-dir    "resources/release/compiled/popup"
                                            :asset-path    "compiled/popup"
-                                           :main          chromex-sample.popup
+                                           :main          gemini.popup
                                            :optimizations :advanced
                                            :elide-asserts true}}
                            :content-script
@@ -107,7 +108,7 @@
                             :compiler     {:output-to     "resources/release/compiled/content-script.js"
                                            :output-dir    "resources/release/compiled/content-script"
                                            :asset-path    "compiled/content-script"
-                                           :main          chromex-sample.content-script
+                                           :main          gemini.content-script
                                            :optimizations :advanced
                                            :elide-asserts true}}}}}}
 
