@@ -40,10 +40,14 @@
   ],
   "background": {
     "page": "background.html",
-    "persistent": false
+    "persistent": true
   },
   "permissions": [
-    "storage"
+    "storage",
+    "tabs"
+  ],
+  "web_accessible_resources": [
+    "minibar/*"
   ],
   "manifest_version": 2
 }

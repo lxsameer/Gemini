@@ -1,9 +1,11 @@
 (ns gemini.content-script.core
-  (:require-macros [cljs.core.async.macros :refer [go-loop]])
+  (:require-macros [cljs.core.async.macros :refer [go-loop go]])
   (:require [cljs.core.async :refer [<!]]
             [chromex.logging :refer-macros [log info warn error group group-end]]
             [chromex.protocols :refer [post-message!]]
-            [chromex.ext.runtime :as runtime :refer-macros [connect]]))
+            [chromex.ext.runtime   :as runtime :refer-macros [connect]]
+            [cljs-http.client      :as http]
+            [goog.dom              :as dom]))
 
 ; -- a message loop ---------------------------------------------------------------------------------------------------------
 
@@ -34,8 +36,22 @@
     (run-message-loop! background-port)
     (do-page-analysis! background-port)))
 
+(defn fetch-minibar
+  []
+  (go
+    (let [url (runtime/get-url "minibar/index.html")
+          res (<! (http/get url))]
+      (prn "SSSS")
+      res)))
 ; -- main entry point -------------------------------------------------------------------------------------------------------
 
 (defn init! []
   (log "CONTENT SCRIPT: init")
+  (log (get-url "minibar/index.html"))
+  (let [document (dom/getDocument)
+        body     (dom/findNode document "body")
+        minibar  (<! (fetch-minibar))]
+    (prn "replacing")
+    (dom/append body minibar))
+
   (connect-to-background-page!))
