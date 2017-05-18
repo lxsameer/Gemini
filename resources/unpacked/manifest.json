@@ -18,6 +18,14 @@
     "48": "images/icon48.png",
     "128": "images/icon128.png"
   },
+  "commands": {
+    "run-command": {
+      "suggested_key": {
+        "default": "Alt+X"
+      },
+      "description": "Brings up the command prompt for Gemini"
+    }
+  },
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "content_scripts": [
     {

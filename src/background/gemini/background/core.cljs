@@ -2,17 +2,18 @@
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [goog.string :as gstring]
             [goog.string.format]
-            [cljs.core.async :refer [<! chan]]
+            [cljs.core.async :refer [<! chan close!]]
             [chromex.logging :refer-macros [log info warn error group group-end]]
             [chromex.chrome-event-channel :refer [make-chrome-event-channel]]
-            [chromex.protocols :refer [post-message! get-sender]]
-            [chromex.ext.tabs :as tabs]
-            [chromex.ext.runtime :as runtime]
-            [gemini.background.storage :refer [test-storage!]]))
+            [chromex.protocols            :refer [post-message! get-sender]]
+            [chromex.ext.tabs             :as tabs]
+            [chromex.app.commands         :as commands]
+            [chromex.ext.runtime          :as runtime]
+            [gemini.background.storage    :refer [test-storage!]]))
 
 (def clients (atom []))
 
-; -- clients manipulation ---------------------------------------------------------------------------------------------------
+;; -- clients manipulation ---------------------------------------------------------------------------------------------------
 
 (defn add-client! [client]
   (log "BACKGROUND: client connected" (get-sender client))
@@ -23,7 +24,7 @@
   (let [remove-item (fn [coll item] (remove #(identical? item %) coll))]
     (swap! clients remove-item client)))
 
-; -- client event loop ------------------------------------------------------------------------------------------------------
+;; -- client event loop ------------------------------------------------------------------------------------------------------
 
 (defn run-client-message-loop! [client]
   (go-loop []
@@ -32,7 +33,7 @@
       (recur))
     (remove-client! client)))
 
-; -- event handlers ---------------------------------------------------------------------------------------------------------
+;; -- event handlers ---------------------------------------------------------------------------------------------------------
 
 (defn handle-client-connection! [client]
   (add-client! client)
@@ -43,14 +44,21 @@
   (doseq [client @clients]
     (post-message! client "a new tab was created")))
 
-; -- main event loop --------------------------------------------------------------------------------------------------------
+(defn handle-incoming-command!
+  [command & rest]
+  (prn "<<<<<<<<<<<<<<")
+  (prn command)
+  (prn rest))
+
+;; -- main event loop --------------------------------------------------------------------------------------------------------
 
 (defn process-chrome-event [event-num event]
   (log (gstring/format "BACKGROUND: got chrome event (%05d)" event-num) event)
   (let [[event-id event-args] event]
     (case event-id
       ::runtime/on-connect (apply handle-client-connection! event-args)
-      ::tabs/on-created (tell-clients-about-new-tab!)
+      ::tabs/on-created    (tell-clients-about-new-tab!)
+      ::on-command         (handle-incoming-command!)
       nil)))
 
 (defn run-chrome-event-loop! [chrome-event-channel]
@@ -65,10 +73,10 @@
   (let [chrome-event-channel (make-chrome-event-channel (chan))]
     (tabs/tap-all-events chrome-event-channel)
     (runtime/tap-all-events chrome-event-channel)
+    (commands/tap-on-command-events chrome-event-channel)
     (run-chrome-event-loop! chrome-event-channel)))
 
-; -- main entry point -------------------------------------------------------------------------------------------------------
-
+;; Main entry point -----------------------------------------------
 (defn init! []
   (log "BACKGROUND: init")
   (test-storage!)
