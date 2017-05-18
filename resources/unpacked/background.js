@@ -1,2 +1,2 @@
 goog.require("devtools.preload");
-goog.require("chromex_sample.background");
+goog.require("gemini.background");
