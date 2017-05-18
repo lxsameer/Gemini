@@ -1,4 +1,4 @@
-(ns ^:figwheel-no-load chromex-sample.content-script
-  (:require [chromex-sample.content-script.core :as core]))
+(ns ^:figwheel-no-load gemini.content-script
+  (:require [gemini.content-script.core :as core]))
 
 (core/init!)

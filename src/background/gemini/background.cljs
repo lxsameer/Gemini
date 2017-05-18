@@ -1,4 +1,4 @@
-(ns ^:figwheel-no-load chromex-sample.background
-  (:require [chromex-sample.background.core :as core]))
+(ns ^:figwheel-no-load gemini.background
+  (:require [gemini.background.core :as core]))
 
 (core/init!)

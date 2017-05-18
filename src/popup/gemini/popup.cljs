@@ -1,4 +1,4 @@
-(ns ^:figwheel-no-load chromex-sample.popup
-  (:require [chromex-sample.popup.core :as core]))
+(ns ^:figwheel-no-load gemini.popup
+  (:require [gemini.popup.core :as core]))
 
 (core/init!)
